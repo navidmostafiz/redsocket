@@ -68,27 +68,33 @@
 </head>
 
 <body>
-    <ul id="messages"></ul>
     <form id="form1" action="">
         <input id="passcode" autocomplete="off" autofocus/>
     </form>
-    <form id="form2" action="">
-        <input id="m" autocomplete="off" autofocus/>
-    </form>
+    <div id="messenger">
+        <ul id="messages"></ul>
+        <form id="form2" action="">
+            <input id="m" autocomplete="off" autofocus/>
+        </form>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
+        var flag = 1;
         $(document).ready(function () {
-            $("#m").focus();
-            $('#m').val('> ');
-            document.getElementById("form2").style.display = "none";
+            $("#passcode").focus();
+            document.getElementById("messenger").style.display = "none";
             // alert("Handler for .click() called.");
             // socket.nickname = 'Earl';
             // socket.join('chatroom1');
         });
 
         $(document).click(function () {
-            $("#m").focus();
+            if (flag == 1) {
+                $("#passcode").focus();
+            } else if (flag == 2) {
+                $("#m").focus();
+            }
             // alert("Handler for .click() called.");
         });
 
@@ -98,10 +104,13 @@
             // socket.emit('send-nickname', nickname);
 
             $('#form1').submit(function () {
+                flag = 2;
                 var nickname = $('#passcode').val();
                 socket.emit('send-nickname', nickname);
                 document.getElementById("form1").style.display = "none";
-                document.getElementById("form2").style.display = "block";
+                document.getElementById("messenger").style.display = "block";
+                $("#m").focus();
+                $('#m').val('> ');
                 return false;
             });
 

@@ -69,6 +69,7 @@
 
 <body>
     <form id="form1" action="">
+        passcode:
         <input id="passcode" autocomplete="off" autofocus/>
     </form>
     <div id="messenger">
@@ -81,6 +82,7 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
         var flag = 1;
+        var nickname = '';
         $(document).ready(function () {
             $("#passcode").focus();
             document.getElementById("messenger").style.display = "none";
@@ -105,12 +107,12 @@
 
             $('#form1').submit(function () {
                 flag = 2;
-                var nickname = $('#passcode').val();
+                nickname = $('#passcode').val();
                 socket.emit('send-nickname', nickname);
                 document.getElementById("form1").style.display = "none";
                 document.getElementById("messenger").style.display = "block";
                 $("#m").focus();
-                $('#m').val('> ');
+                $('#m').val(nickname + ': ');
                 return false;
             });
 
@@ -120,7 +122,7 @@
                 if ($('#m').val() != '> ' && $('#m').val() != '' && $('#m').val() != ' ') {
                     socket.emit('broadcast', $('#m').val());
                 }
-                $('#m').val('> ');
+                $('#m').val(nickname + ': '); //chat reset
                 return false;
             });
 

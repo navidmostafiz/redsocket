@@ -7,36 +7,48 @@
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            /* box-sizing: border-box; */
+            color: gray;
+        }
+
+        *:focus {
+            outline: none;
         }
 
         body {
             font: 13px Helvetica, Arial;
+            background-color: black;
         }
 
         form {
-            background: #000;
-            padding: 3px;
-            position: fixed;
-            bottom: 0;
+            /* background: #000; */
+            /* padding: 3px; */
+            /* position: fixed; */
+            /* bottom: 0; */
             width: 100%;
+        }
+
+        input:focus {
+            outline: none;
         }
 
         form input {
             border: 0;
-            padding: 10px;
-            width: 90%;
-            margin-right: .5%;
+            outline: none;
+            width: 100%;
+            background-color: black;
+            /* padding: 10px; */
+            /* margin-right: .5%; */
         }
 
-        form button {
+        /* form button {
             width: 9%;
             background: rgb(130, 224, 255);
             border: none;
             padding: 10px;
-        }
+        } */
 
-        #messages {
+        /* #messages {
             list-style-type: none;
             margin: 0;
             padding: 0;
@@ -47,35 +59,67 @@
         }
 
         #messages li:nth-child(odd) {
-            background: #eee;
-        }
+            background: darkgreen        }
 
         #messages {
-            margin-bottom: 40px
-        }
+            margin-bottom: 2px
+        } */
     </style>
 </head>
 
 <body>
     <ul id="messages"></ul>
-    <form action="">
-        <input id="m" autocomplete="off" />
-        <button>Send</button>
+    <form id="form1" action="">
+        <input id="passcode" autocomplete="off" autofocus/>
+    </form>
+    <form id="form2" action="">
+        <input id="m" autocomplete="off" autofocus/>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
+        $(document).ready(function () {
+            $("#m").focus();
+            $('#m').val('> ');
+            document.getElementById("form2").style.display = "none";
+            // alert("Handler for .click() called.");
+            // socket.nickname = 'Earl';
+            // socket.join('chatroom1');
+        });
+
+        $(document).click(function () {
+            $("#m").focus();
+            // alert("Handler for .click() called.");
+        });
+
         $(function () {
-            var socket = io();
-            $('form').submit(function () {
-                socket.emit('chat message', $('#m').val());
-                $('#m').val('');
+
+            var socket = io('/redvarse');
+            // socket.emit('send-nickname', nickname);
+
+            $('#form1').submit(function () {
+                var nickname = $('#passcode').val();
+                socket.emit('send-nickname', nickname);
+                document.getElementById("form1").style.display = "none";
+                document.getElementById("form2").style.display = "block";
                 return false;
             });
-            socket.on('chat message', function (msg) {
+
+
+            $('#form2').submit(function () {
+
+                if ($('#m').val() != '> ' && $('#m').val() != '' && $('#m').val() != ' ') {
+                    socket.emit('broadcast', $('#m').val());
+                }
+                $('#m').val('> ');
+                return false;
+            });
+
+            socket.on('broadcast', function (msg) {
                 $('#messages').append($('<li>').text(msg));
                 window.scrollTo(0, document.body.scrollHeight);
             });
+
         });
     </script>
 </body>
